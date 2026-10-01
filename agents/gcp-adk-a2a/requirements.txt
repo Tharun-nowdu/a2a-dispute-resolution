@@ -1,0 +1,4 @@
+google_adk==0.2.0
+fastapi
+a2a-sdk==0.2.8
+uvicorn[standard]

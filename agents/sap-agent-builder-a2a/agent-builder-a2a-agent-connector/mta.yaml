@@ -1,0 +1,35 @@
+_schema-version: 3.3.0
+ID: sap-agent-builder-a2a-agent-connector
+version: 1.0.0
+description: "Wraps the SAP Dispute Resolution Agent, which runs on Business Agent Foundation (BAF), to use the A2A protocol"
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - cds build --production
+
+modules:
+  - name: sap-agent-builder-a2a-agent-connector-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      instances: 1
+      buildpack: nodejs_buildpack
+      disk-quota: 500MB
+      memory: 250MB
+    build-parameters:
+      builder: custom
+      commands:
+        # skip postinstall during build
+        - npm ci --production --ignore-scripts
+    requires:
+      - name: pab
+
+resources:
+  - name: pab
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: unified-agent-runtime-dev
+      service-plan: default
